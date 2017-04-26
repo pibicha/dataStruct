@@ -5,7 +5,7 @@ python中的Queue更像是java的LinkedBlokingQueue;
 """
 
 
-class Queue:
+class MyQueue:
     def __init__(self):
         self.item = []
 
@@ -13,10 +13,10 @@ class Queue:
         self.item.insert(0, item)
 
     def dequeue(self):
-        return self.items.pop()
+        return self.item.pop()
 
     def size(self):
-        return len(self.items)
+        return len(self.item)
 
     def isEmpty(self):
-        return 0 == len(self.items)
+        return 0 == len(self.item)

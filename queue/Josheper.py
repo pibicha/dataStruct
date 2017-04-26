@@ -1,8 +1,7 @@
 """
 众人围一圈；从一数到七；人来又人往；逢七便出局；直至座一人；
 """
-
-from . import MyQueue
+from queue.MyQueue import MyQueue
 
 
 def josheper(players, bullet=7):
@@ -21,3 +20,8 @@ def josheper(players, bullet=7):
 
         # 逢七便出局
         seat.dequeue()
+
+    return seat.dequeue()
+
+
+print(josheper(["张三", "里斯", "王二", "麻子", "韩梅梅", "李芳芳"]))
