@@ -82,6 +82,13 @@ class BinarySearchTree:
     def __getitem__(self, key):
         return self.get(key)
 
+    # 实现in操作 这里操作的是key
+    def __contains__(self, item):
+        if self.searchValue(item, self.root):
+            return True
+        else:
+            return False
+
 
 class TreeNode:
     def __init__(self, key, value, left=None, right=None, parent=None):
@@ -106,5 +113,7 @@ class TreeNode:
 
 bst = BinarySearchTree()
 bst.put(1, "a")
-bst.put(2,"b")
-print(bst[1],bst[2])
+bst.put(2, "b")
+print(bst[1], bst[2])
+if 1 in bst:
+    print("yes")
