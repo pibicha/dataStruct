@@ -113,7 +113,6 @@ class BinarySearchTree:
                 raise KeyError('key not in tree')
 
     def remove(self, currentNode):
-        # 当前节点是叶子节点
         if currentNode.isLeaf():
             if currentNode.parent.leftChild == currentNode:
                 currentNode.parent.leftChild = None
@@ -123,10 +122,64 @@ class BinarySearchTree:
         当前节点有两个个节点
         3.1.1
         两个子节点中，选谁来升做父节点？
-        回忆小顶堆中，是选择较小的子节点上浮，
-
+        解决办法：
+        1，寻找继任者
+        1.1 如果节点有右子节点，则后继节点是右子树中的最小的键。
+        1.2 如果节点没有右子节点并且是父节点的左子节点，则父节点是后继节点。
+        1.3 如果节点是其父节点的右子节点，并且它本身没有右子节点，则此节点的后继节点是其父节点的后继节点，不包括此节点。
+        2，使用继任者填到删除节点的位置
         """
-        if currentNode.hasBothChildren():
+
+    # 继任者对于右树来说，是右的最小值，
+    def findSuccessor(self):
+        succ = None
+        if self.hasRightChild():
+            succ = self.rightChild.findMin()
+        else:
+            if self.parent:
+                if self.isLeftChild():
+                    succ = self.parent
+                else:
+                    self.parent.rightChild = None
+                    succ = self.parent.findSuccessor()
+                    self.parent.rightChild = self
+        return succ
+
+    def findMin(self):
+        current = self
+        while current.hasLeftChild():
+            current = current.leftChild
+        return current
+
+    def spliceOut(self):
+        if self.isLeaf():
+            if self.isLeftChild():
+                self.parent.leftChild = None
+            else:
+                self.parent.rightChild = None
+        elif self.hasAnyChildren():
+            if self.hasLeftChild():
+                if self.isLeftChild():
+                    self.parent.leftChild = self.leftChild
+                else:
+                    self.parent.rightChild = self.leftChild
+                self.leftChild.parent = self.parent
+            else:
+                if self.isLeftChild():
+                    self.parent.leftChild = self.rightChild
+                else:
+                    self.parent.rightChild = self.rightChild
+                self.rightChild.parent = self.parent
+
+    def __iter__(self):
+        if self:
+            if self.hasLeftChild():
+                for elem in self.leftChiLd:
+                    yield elem
+            yield self.key
+            if self.hasRightChild():
+                for elem in self.rightChild:
+                    yield elem
 
 
 class TreeNode:
@@ -167,5 +220,3 @@ bst = BinarySearchTree()
 bst.put(1, "a")
 bst.put(2, "b")
 print(bst[1], bst[2])
-if 1 in bst:
-    print("yes")
