@@ -112,23 +112,60 @@ class BinarySearchTree:
             else:
                 raise KeyError('key not in tree')
 
+    """
+    当前节点有两个个节点
+    3.1.1
+    两个子节点中，选谁来升做父节点？
+    解决办法1：
+    1，寻找继任者
+    1.1 如果节点有右子节点，则后继节点是右子树中的最小的键。
+    1.2 如果节点没有右子节点并且是父节点的左子节点，则父节点是后继节点。
+    1.3 如果节点是其父节点的右子节点，并且它本身没有右子节点，则此节点的后继节点是其父节点的后继节点，不包括此节点。
+    2，使用继任者填到删除节点的位置
+
+    解决办法2：
+    说实话没办法理解查到的第一种解决方法的思路。。。 于是查到另一种实现方式；
+    是根据T.Hibbard提出的，先删除节点x，在使用后继节点填补它！
+    由于x有两个子节点，在右节点中，找到其min值，使用min替换x，在删除x，即可
+    保证bst的性质~~！！！
+
+    """
+
     def remove(self, currentNode):
         if currentNode.isLeaf():
             if currentNode.parent.leftChild == currentNode:
                 currentNode.parent.leftChild = None
             else:
                 currentNode.parent.rightChild = None
-        """
-        当前节点有两个个节点
-        3.1.1
-        两个子节点中，选谁来升做父节点？
-        解决办法：
-        1，寻找继任者
-        1.1 如果节点有右子节点，则后继节点是右子树中的最小的键。
-        1.2 如果节点没有右子节点并且是父节点的左子节点，则父节点是后继节点。
-        1.3 如果节点是其父节点的右子节点，并且它本身没有右子节点，则此节点的后继节点是其父节点的后继节点，不包括此节点。
-        2，使用继任者填到删除节点的位置
-        """
+
+
+        elif currentNode.hasBothChildren():
+            succ = currentNode.findSuccessor()
+            succ.spliceOut()
+            currentNode.key = succ.key
+            currentNode.payload = succ.payload
+
+        else:
+            # 待删除节点只有一个子节点
+            if currentNode.hasLeftChild():
+                if currentNode.isLeftChild():
+                    currentNode.leftChild.parent = currentNode.parent
+                    currentNode.parent.leftChild = currentNode.leftChild
+                elif currentNode.isRightChild():
+                    currentNode.leftChild.parent = currentNode.parent
+                    currentNode.parent.rightChild = currentNode.leftChild
+            else:
+                if currentNode.isLeftChild():
+                    currentNode.rightChild.parent = currentNode.parent
+                    currentNode.parent.leftChild = currentNode.rightChild
+                elif currentNode.isRightChild():
+                    currentNode.rightChild.parent = currentNode.parent
+                    currentNode.parent.rightChild = currentNode.rightChild
+                else:
+                    currentNode.replaceNodeData(currentNode.rightChild.key,
+                                                currentNode.rightChild.payload,
+                                                currentNode.rightChild.leftChild,
+                                                currentNode.rightChild.rightChild)
 
     # 继任者对于右树来说，是右的最小值，
     def findSuccessor(self):
