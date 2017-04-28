@@ -89,6 +89,45 @@ class BinarySearchTree:
         else:
             return False
 
+    """
+    对于删除，先考虑节点的情况
+    1，树中只有一个节点
+    2，是叶子节点；直接删除，也不会影响树的结构（平衡树和红黑树就会有影响了）
+    3，有子节点不为空；这种情况比较麻烦，考虑其节点情况
+    3.1，待删除的节点有左右两个节点，这种情况稍微复杂，使用辅助函数，
+    3.2，待删除的节点，只有一个子结点，那么将独子放到删除节点的位置
+
+    基于以上情况，需要在TreeNode中，新增几个判断节点的子节点情况的方法
+    """
+
+    def delete(self, key):
+        if self.size == 1 and self.root.key == key:
+            self.root = None
+            self.size -= 1
+        elif self.size > 1:
+            needRemove = self.searchSeat(key, self.root)
+            if needRemove:
+                self.remove(needRemove)
+                self.size -= 1
+            else:
+                raise KeyError('key not in tree')
+
+    def remove(self, currentNode):
+        # 当前节点是叶子节点
+        if currentNode.isLeaf():
+            if currentNode.parent.leftChild == currentNode:
+                currentNode.parent.leftChild = None
+            else:
+                currentNode.parent.rightChild = None
+        """
+        当前节点有两个个节点
+        3.1.1
+        两个子节点中，选谁来升做父节点？
+        回忆小顶堆中，是选择较小的子节点上浮，
+
+        """
+        if currentNode.hasBothChildren():
+
 
 class TreeNode:
     def __init__(self, key, value, left=None, right=None, parent=None):
@@ -109,6 +148,19 @@ class TreeNode:
 
     def isLeaf(self):
         return not (self.rightChild or self.leftChild)
+
+    # 删除节点所需方法
+    def hasAnyChildren(self):
+        return self.rightChild or self.leftChild
+
+    def hasBothChildren(self):
+        return self.rightChild and self.leftChild
+
+    def isLeftChild(self):
+        return self.parent and self.parent.leftChild == self
+
+    def isRightChild(self):
+        return self.parent and self.parent.rightChild == self
 
 
 bst = BinarySearchTree()
