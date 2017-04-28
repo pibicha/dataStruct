@@ -47,6 +47,7 @@ class BinHeap:
         self.currentSize -= 1
         # 2)
         self.down(1)
+        return top
 
     def down(self, index):
         while index * 2 <= self.currentSize:
@@ -68,13 +69,30 @@ class BinHeap:
     def __repr__(self):
         print(self.heapList)
 
+    # 在测试时，每次都要单独insert，好麻烦；所以实现一个build方法，传入List可以构建BinHeap
+    def buildheap(self, list):
+        # 方案一，一个个insert，不过这样每次插入都要考虑上浮。。。
+        # 方案二，整个list一次性构建成堆，然后考虑堆的性质
+        # 这里使用方案二，从叶子节点的父节点，开始下沉，依次到根节点，便可保证堆的性质
+        self.currentSize = len(list)
+        self.heapList = [0] + list[:]
+        index = self.currentSize // 2
+        while index > 0:
+            self.down(index)
+            index -= 1
 
-bh = BinHeap()
-bh.insert(7)
-bh.insert(9)
-bh.insert(11)
-bh.insert(5)
-bh.insert(8)
-# print(bh)
-bh.popTop()
-print(bh)
+
+# Test
+import random
+
+
+def test():
+    binHeap = BinHeap()
+    list = []
+    for i in range(1, 7):
+        list.append(random.randint(1, 20))
+    binHeap.buildheap(list)
+    print(binHeap)
+
+
+test()
